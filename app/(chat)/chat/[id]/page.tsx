@@ -1,8 +1,9 @@
+import { nanoid } from '@/lib/utils'
 import { type Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
 import { auth } from '@/auth'
-import { getChat, getMissingKeys } from '@/app/actions'
+import { getMissingKeys } from '@/app/actions'
 import { Chat } from '@/components/chat'
 import { AI } from '@/lib/chat/actions'
 import { Session } from '@/lib/types'
@@ -22,44 +23,41 @@ export async function generateMetadata({
     return {}
   }
 
-  const chat = await getChat(params.id, session.user.id)
+  // const chat = await getChat(params.id, session.user.id)
 
-  if (!chat || 'error' in chat) {
-    redirect('/')
-  } else {
-    return {
-      title: chat?.title.toString().slice(0, 50) ?? 'Chat'
-    }
-  }
+  return {
+    title: 'Next.js AI Chat'
+  }  
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
-  const session = (await auth()) as Session
+  // const session = (await auth()) as Session
   const missingKeys = await getMissingKeys()
 
-  if (!session?.user) {
-    redirect(`/login?next=/chat/${params.id}`)
-  }
+  // if (!session?.user) {
+  //   redirect(`/login?next=/chat/${params.id}`)
+  // }
 
-  const userId = session.user.id as string
-  const chat = await getChat(params.id, userId)
+  // const userId = session.user.id as string
+  // const chat = await getChat(params.id, userId)
 
-  if (!chat || 'error' in chat) {
-    redirect('/')
-  } else {
-    if (chat?.userId !== session?.user?.id) {
-      notFound()
-    }
-
+  // if (!chat || 'error' in chat) {
+  //   redirect('/')
+  // } else {
+  //   if (chat?.userId !== session?.user?.id) {
+  //     notFound()
+  //   }
+    const id = nanoid()
     return (
-      <AI initialAIState={{ chatId: chat.id, messages: chat.messages }}>
+      // <AI initialAIState={{ chatId: chat.id, messages: chat.messages }}>
+      <AI>
         <Chat
-          id={chat.id}
-          session={session}
-          initialMessages={chat.messages}
+          // id={chat.id}
+          // session={session}
+          // initialMessages={chat.messages}
           missingKeys={missingKeys}
         />
       </AI>
     )
-  }
+  // }
 }
